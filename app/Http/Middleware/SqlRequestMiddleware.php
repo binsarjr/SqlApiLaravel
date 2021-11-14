@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Driver\SqlDriver;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -15,6 +16,11 @@ class SqlRequestMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+        SqlDriver::$type = $request->type;
+        SqlDriver::$bindings = $request->bindings ?? [];
+        SqlDriver::$query = $request->sql;
+        SqlDriver::$connection = $request->connection;
+
         $type = $request->type;
         $raw = Str::lower(json_encode($request->all()));
         $contains = ['INFORMATION_SCHEMA'];
@@ -22,7 +28,7 @@ class SqlRequestMiddleware
             $this->forbidden('Terdapat query berbahaya, permintaan kami tolak');
         }
 
-        // Dont worry about `where` or `where(`
+        // Dont worry about ` where ` or `where(`
         $haveToBindings = ['where', 'values', 'set'];
         $needles = [];
         foreach ($haveToBindings as $item) {
