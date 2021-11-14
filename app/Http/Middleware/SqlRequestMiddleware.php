@@ -22,7 +22,14 @@ class SqlRequestMiddleware
             $this->forbidden('Terdapat query berbahaya, permintaan kami tolak');
         }
 
-        if (Str::contains($raw, ['where', 'values'])) {
+        // Dont worry about `where` or `where(`
+        $haveToBindings = ['where', 'values', 'set'];
+        $needles = [];
+        foreach ($haveToBindings as $item) {
+            $needles[] = ' '.$item.' ';
+            $needles[] = $item.'(';
+        }
+        if (Str::contains($raw, $needles)) {
             if (!$request->has('bindings')) {
                 $this->forbidden('Mohon gunakan query binding');
             }
