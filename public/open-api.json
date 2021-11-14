@@ -1,0 +1,71 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "SQL Query API",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.server.test/v1"
+        },
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "SqlRequestBody": {
+                "type": "object",
+                "required": [
+                    "sql"
+                ],
+                "properties": {
+                    "sql": {
+                        "type": "string",
+                        "description": "Query",
+                        "example": "select * from users where id = ?"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "read",
+                            "write"
+                        ],
+                        "default": "read"
+                    },
+                    "bindings": {
+                        "type": "array",
+                        "description": "bindings bisa berupa array bisa berupa object apabila ingin menggunakan named parameter",
+                        "example": [
+                            "1"
+                        ]
+                    },
+                    "connection": {
+                        "type": "string",
+                        "description": "Nama Koneksi yang sudah di set pada database.php"
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/api/query": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SqlRequestBody"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
+}
