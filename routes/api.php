@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware('sql.security')->group(function () {
-    Route::match(['post', 'get'], 'query', [SqlController::class, 'index']);
+    Route::post('query', [SqlController::class, 'index']);
 });
